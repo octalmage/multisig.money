@@ -9,7 +9,7 @@ import {
   WalletProvider,
 } from '@terra-money/wallet-provider';
 
-function SafeHydrate({ children }) {
+function SafeHydrate({ children }: { children: any }) {
   return (
     <div suppressHydrationWarning>
       {typeof window === 'undefined' ? null : children}
