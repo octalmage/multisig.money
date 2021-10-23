@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
-import { LCDClient } from '@terra-money/terra.js';
-import { useConnectedWallet } from '@terra-money/wallet-provider';
+import { LCDClient } from '@terra-money/terra.js'
+import { useConnectedWallet } from '@terra-money/wallet-provider'
 import WalletLoader from 'components/WalletLoader'
 import { useSigningClient } from 'contexts/cosmwasm'
 import { useState, useEffect, useMemo } from 'react'
@@ -15,21 +15,20 @@ type Expiration = {
 
 const Home: NextPage = () => {
   const router = useRouter()
-  const multisigAddress = router.query.multisigAddress as string;
+  const multisigAddress = router.query.multisigAddress as string
 
-  const connectedWallet = useConnectedWallet();
+  const connectedWallet = useConnectedWallet()
 
   const lcd = useMemo(() => {
     if (!connectedWallet) {
-      return null;
+      return null
     }
 
     return new LCDClient({
       URL: connectedWallet.network.lcd,
       chainID: connectedWallet.network.chainID,
-    });
-  }, [connectedWallet]);
-
+    })
+  }, [connectedWallet])
 
   const { walletAddress, signingClient } = useSigningClient()
   const [reversedProposals, setReversedProposals] = useState<
@@ -45,15 +44,18 @@ const Home: NextPage = () => {
       setHideLoadMore(false)
       return
     }
-    setLoading(true);
+    setLoading(true)
 
-    lcd.wasm.contractQuery(multisigAddress,{ reverse_proposals: {
-      ...(startBefore && { start_before: startBefore }),
-      limit: 10,
-    }})
+    lcd.wasm
+      .contractQuery(multisigAddress, {
+        reverse_proposals: {
+          ...(startBefore && { start_before: startBefore }),
+          limit: 10,
+        },
+      })
       // TODO: Type return
       .then((response: any) => {
-        console.log(response.proposals);
+        console.log(response.proposals)
         if (response.proposals.length < 10) {
           setHideLoadMore(true)
         }
@@ -113,6 +115,15 @@ const Home: NextPage = () => {
             Load More
           </button>
         )}
+      </div>
+      <div className="flex flex-wrap items-center justify-around md:max-w-4xl mt-6 sm:w-full">
+        <a
+          rel="noopener noreferrer"
+          href={`https://finder.extraterrestrial.money/columbus-5/address/${multisigAddress}`}
+          target="_blank"
+        >
+          <h3 className="text-2xl font-bold">Block explorer &rarr;</h3>
+        </a>
       </div>
       <div></div>
     </WalletLoader>
