@@ -116,7 +116,7 @@ const Proposal: NextPage = () => {
         setLoading(false)
         setError(err.message)
       })
-  }, [walletAddress, signingClient, multisigAddress, proposalId, timestamp])
+  }, [walletAddress, signingClient, multisigAddress, proposalId, timestamp, connectedWallet])
 
   const handleVote = async (vote: string) => {
     const execute = new MsgExecuteContract(
