@@ -41,10 +41,18 @@ function WalletLoader({
             className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus"
             onClick={() => connect(ConnectType.CHROME_EXTENSION)}
           >
-            <h3 className="text-2xl font-bold">Connect your wallet &rarr;</h3>
+            <h3 className="text-2xl font-bold">Connect Chrome extension &rarr;</h3>
             <p className="mt-4 text-xl">
-              Create and manage your multsig by connecting your Keplr wallet.
+              Manage your multsig by connecting your Terra Station wallet.
             </p>
+          </button>
+        </div>
+        <div className="flex flex-wrap items-center justify-around md:max-w-4xl mt-6 sm:w-full">
+          <button
+            className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus"
+            onClick={() => connect(ConnectType.WALLETCONNECT)}
+          >
+            <h3 className="text-2xl font-bold">WalletConnect &rarr;</h3>
           </button>
         </div>
       </div>
