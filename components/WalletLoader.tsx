@@ -41,7 +41,7 @@ function WalletLoader({
             className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus"
             onClick={() => connect(ConnectType.CHROME_EXTENSION)}
           >
-            <h3 className="text-2xl font-bold">Connect Chrome extension &rarr;</h3>
+            <h3 className="text-2xl font-bold">Chrome extension &rarr;</h3>
             <p className="mt-4 text-xl">
               Manage your multsig by connecting your Terra Station wallet.
             </p>
