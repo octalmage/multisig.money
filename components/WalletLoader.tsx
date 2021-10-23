@@ -34,7 +34,7 @@ function WalletLoader({
     return (
       <div className="max-w-full">
         <h1 className="text-6xl font-bold">
-          Welcome to {process.env.NEXT_PUBLIC_SITE_TITLE}!
+          Welcome
         </h1>
         <div className="flex flex-wrap items-center justify-around md:max-w-4xl mt-6 sm:w-full">
           <button
