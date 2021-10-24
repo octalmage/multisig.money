@@ -131,7 +131,6 @@ const Proposal: NextPage = () => {
         msgs: [execute],
       })
       .then((response) => {
-        console.log(response)
         setTimestamp(new Date())
         setTransactionHash(response.result.txhash)
       })
@@ -169,13 +168,22 @@ const Proposal: NextPage = () => {
 
   const handleClose = async () => {
     setError('')
-    signingClient
-      ?.execute(walletAddress, multisigAddress, {
+    const close = new MsgExecuteContract(
+      connectedWallet?.walletAddress.toString() || '',
+      multisigAddress,
+      {
         close: { proposal_id: parseInt(proposalId) },
+      },
+      {}
+    )
+
+    connectedWallet
+      ?.post({
+        msgs: [close],
       })
       .then((response) => {
         setTimestamp(new Date())
-        setTransactionHash(response.transactionHash)
+        setTransactionHash(response.result.txhash)
       })
       .catch((err) => {
         setLoading(false)
