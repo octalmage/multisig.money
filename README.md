@@ -42,7 +42,7 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 ## Requirements
 
-Please ensure you have the [Keplr wallet extension](https://chrome.google.com/webstore/detail/terra-station/aiifbnbfobpmeekipheeijimdpnlpgpp?hl=en) installed in your Chrome based browser (Chrome, Brave, etc).
+Please ensure you have the [Terra Station extension](https://chrome.google.com/webstore/detail/terra-station/aiifbnbfobpmeekipheeijimdpnlpgpp?hl=en) installed in your Chrome based browser (Chrome, Brave, etc).
 
 ## Learn More
 
