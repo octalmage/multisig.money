@@ -93,8 +93,7 @@ export default function ProposalCard({
     <Link href={`/${encodeURIComponent(multisigAddress)}/${id}`}>
       <a>
         <div
-          className={`card shadow-lg mb-4`}
-          title={`Expires at ${expiresAtDateTime}`}
+          className={`card bordered shadow-lg mb-4`}
         >
           <div className="card-body py-4 px-8">
             <div className="card-title flex flex-row justify-between m-0">
@@ -112,6 +111,7 @@ export default function ProposalCard({
                 <div className="text-2xl text-info">{icons.bell}</div>
               )}
             </div>
+            {status !== 'executed' && (<p className="py-4 text-left">{`Expires ${expiresAtDateTime}`}</p>)}
           </div>
         </div>
       </a>
