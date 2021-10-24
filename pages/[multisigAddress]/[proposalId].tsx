@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import { VoteInfo, ProposalResponse } from 'types/cw3'
-import { LCDClient, MsgExecuteContract, Fee } from '@terra-money/terra.js'
+import { LCDClient, MsgExecuteContract } from '@terra-money/terra.js'
 import { useConnectedWallet } from '@terra-money/wallet-provider'
 
 function VoteButtons({

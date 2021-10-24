@@ -1,15 +1,15 @@
 import type { NextPage } from 'next'
-import { FormEvent } from 'react'
+import { FormEvent, useMemo } from 'react'
 import WalletLoader from 'components/WalletLoader'
-import { useSigningClient } from 'contexts/cosmwasm'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
-import { InstantiateResult } from '@cosmjs/cosmwasm-stargate'
 import { InstantiateMsg, Voter } from 'types/cw3'
+import { MsgInstantiateContract, LCDClient } from '@terra-money/terra.js'
+import { useConnectedWallet, useWallet } from '@terra-money/wallet-provider'
 
 const MULTISIG_CODE_ID =
-  parseInt(process.env.NEXT_MULTISIG_CODE_ID as string) || 49
+  parseInt(process.env.NEXT_MULTISIG_CODE_ID as string) || 595
 
 function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
   return (
@@ -39,12 +39,9 @@ function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
   )
 }
 
-function validateNonEmpty(msg: InstantiateMsg, label: string) {
+function validateNonEmpty(msg: InstantiateMsg) {
   const { required_weight, max_voting_period, voters } = msg
   if (isNaN(required_weight) || isNaN(max_voting_period.time)) {
-    return false
-  }
-  if (label.length === 0) {
     return false
   }
   if (
@@ -68,11 +65,25 @@ interface MultisigFormElement extends HTMLFormElement {
 
 const CreateMultisig: NextPage = () => {
   const router = useRouter()
-  const { walletAddress, signingClient } = useSigningClient()
   const [count, setCount] = useState(2)
   const [contractAddress, setContractAddress] = useState('')
   const [error, setError] = useState('')
+  const [transactionHash, setTransactionHash] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const connectedWallet = useConnectedWallet()
+  const { post } = useWallet()
+
+  const lcd = useMemo(() => {
+    if (!connectedWallet) {
+      return null
+    }
+
+    return new LCDClient({
+      URL: connectedWallet.network.lcd,
+      chainID: connectedWallet.network.chainID,
+    })
+  }, [connectedWallet])
 
   const handleSubmit = (event: FormEvent<MultisigFormElement>) => {
     event.preventDefault()
@@ -95,33 +106,29 @@ const CreateMultisig: NextPage = () => {
       required_weight,
       max_voting_period,
     }
-
-    const label = formEl.label.value.trim()
-
     // @ebaker TODO: add more validation
-    if (!validateNonEmpty(msg, label)) {
+    if (!validateNonEmpty(msg)) {
       setLoading(false)
       setError('All fields are required.')
       return
     }
 
-    if (!signingClient) {
-      setLoading(false)
-      setError('Please try reconnecting your wallet.')
-      return
-    }
+    const execute = new MsgInstantiateContract(
+      connectedWallet?.walletAddress.toString() || '',
+      connectedWallet?.walletAddress.toString() || '',
+      MULTISIG_CODE_ID,
+      msg,
+      {}
+    )
 
-    signingClient
-      .instantiate(walletAddress, MULTISIG_CODE_ID, msg, label)
-      .then((response: InstantiateResult) => {
-        setLoading(false)
-        if (response.contractAddress.length > 0) {
-          setContractAddress(response.contractAddress)
-        }
+    post({
+      msgs: [execute],
+    })
+      .then(async (response) => {
+        setTransactionHash(response.result.txhash)
       })
-      .catch((err: any) => {
+      .catch((err) => {
         setLoading(false)
-        console.log('err', err)
         setError(err.message)
       })
   }
@@ -170,7 +177,6 @@ const CreateMultisig: NextPage = () => {
                 <th className="text-left box-border px-2 text-sm">
                   Max Voting Period (seconds)
                 </th>
-                <th className="text-left">Label</th>
               </tr>
             </thead>
             <tbody>
@@ -198,15 +204,6 @@ const CreateMultisig: NextPage = () => {
                     readOnly={complete}
                   />
                 </td>
-                <td>
-                  <input
-                    className="block box-border m-0 w-full rounded  input input-bordered focus:input-primary"
-                    name="label"
-                    type="text"
-                    placeholder="My multisig name"
-                    readOnly={complete}
-                  />
-                </td>
               </tr>
             </tbody>
           </table>
@@ -226,18 +223,12 @@ const CreateMultisig: NextPage = () => {
 
         {error && <LineAlert variant="error" msg={error} />}
 
-        {contractAddress !== '' && (
-          <div className="text-right">
-            <LineAlert variant="success" msg={`Success!`} />
-            <button
-              className="mt-4 box-border px-4 py-2 btn btn-primary"
-              onClick={(e) => {
-                e.preventDefault()
-                router.push(`/${encodeURIComponent(contractAddress)}`)
-              }}
-            >
-              View Multisig &#8599;
-            </button>
+        {transactionHash && (
+          <div className="mt-8 text-right">
+            <LineAlert
+              variant="success"
+              msg={`Success! Transaction Hash: ${transactionHash}`}
+            />
           </div>
         )}
       </div>
