@@ -14,7 +14,7 @@ This project creates a web UI around the [CosmWasm/cw-plus](https://github.com/C
 - Vote on proposals created by other users of the multisig
 - Execute proposals that have reached sufficient approval vote threshold
 
-This version of the UI is forked from and custimized for the [Terra](https://terra.money) blockchain: https://github.com/ebaker/cw3-fixed-multisig-dapp
+This version of the UI is forked from https://github.com/ebaker/cw3-fixed-multisig-dapp and custimized for the [Terra](https://terra.money) blockchain.
 
 ## Proposal List UI
 
@@ -25,7 +25,7 @@ The proposal list UI provides icons indicating proposal status:
 ## Development
 
 ```bash
-git clone https://github.com/ebaker/cw3-fixed-multisig-dapp
+git clone https://github.com/octalmage/cw-fixed-multisig-dapp
 ```
 
 Then, run the development server:
@@ -46,13 +46,5 @@ Please ensure you have the [Keplr wallet extension](https://chrome.google.com/we
 
 ## Learn More
 
-To learn more about Next.js, CosmJS, Keplr, and Tailwind CSS - take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - utility-first CSS framework.
-- [DaisyUI Documentation](https://daisyui.com/docs/use) - lightweight component library built on [tailwindcss](https://tailwindcss.com/).
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
+TODO
 
