@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         Powered by{'  '}
         <a className="pl-1 link link-primary link-hover" href={POWERED_BY_URL}>
           <div>Terra</div>
-        </a>
+        </a>. <a target="_blank" rel="noopener noreferrer" href="https://github.com/octalmage/cw-multisig-fixed-dapp">Source code</a>
       </footer>
     </div>
   )
