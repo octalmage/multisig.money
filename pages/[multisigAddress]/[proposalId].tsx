@@ -209,7 +209,7 @@ const Proposal: NextPage = () => {
                   router.push(`/${multisigAddress}`)
                 }}
                 votes={votes}
-                walletAddress={walletAddress}
+                walletAddress={connectedWallet?.walletAddress}
                 status={proposal.status}
               />
 
