@@ -55,7 +55,6 @@ const Home: NextPage = () => {
       })
       // TODO: Type return
       .then((response: any) => {
-        console.log(response.proposals)
         if (response.proposals.length < 10) {
           setHideLoadMore(true)
         }

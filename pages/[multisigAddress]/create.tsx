@@ -93,7 +93,6 @@ const ProposalCreate: NextPage = () => {
         msgs: [execute],
       })
       .then((response) => {
-        console.log(response);
         setTransactionHash(response.result.txhash)
       })
       .catch((err) => {
