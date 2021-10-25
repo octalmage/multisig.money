@@ -125,6 +125,7 @@ const CreateMultisig: NextPage = () => {
       msgs: [execute],
     })
       .then(async (response) => {
+        setLoading(false);
         setTransactionHash(response.result.txhash)
       })
       .catch((err) => {
