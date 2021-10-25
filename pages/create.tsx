@@ -8,8 +8,8 @@ import { InstantiateMsg, Voter } from 'types/cw3'
 import { MsgInstantiateContract, LCDClient } from '@terra-money/terra.js'
 import { useConnectedWallet, useWallet } from '@terra-money/wallet-provider'
 
-const MULTISIG_CODE_ID =
-  parseInt(process.env.NEXT_MULTISIG_CODE_ID as string) || 595
+const MULTISIG_CODE_ID = 595;
+const MULTISIG_CODE_ID_TESTNET = 15690;
 
 function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
   return (
@@ -116,7 +116,7 @@ const CreateMultisig: NextPage = () => {
     const execute = new MsgInstantiateContract(
       connectedWallet?.walletAddress.toString() || '',
       connectedWallet?.walletAddress.toString() || '',
-      MULTISIG_CODE_ID,
+      connectedWallet?.network.name === 'testnet' ? MULTISIG_CODE_ID_TESTNET : MULTISIG_CODE_ID,
       msg,
       {}
     )
