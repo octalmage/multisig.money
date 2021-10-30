@@ -14,7 +14,7 @@ This project creates a web UI around the [CosmWasm/cw-plus](https://github.com/C
 - Vote on proposals created by other users of the multisig
 - Execute proposals that have reached sufficient approval vote threshold
 
-This version of the UI is forked from https://github.com/ebaker/cw3-fixed-multisig-dapp and custimized for the [Terra](https://terra.money) blockchain.
+This version of the UI is forked from https://github.com/ebaker/cw3-fixed-multisig-dapp and customized for the [Terra](https://terra.money) blockchain.
 
 ## Proposal List UI
 
