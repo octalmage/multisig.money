@@ -52,27 +52,6 @@ interface ProposalFormElement extends HTMLFormElement {
   readonly elements: FormElements
 }
 
-function validateJsonSendMsg(json: any, multisigAddress: string) {
-  if (typeof json !== 'object') {
-    return false
-  }
-  if (Array.isArray(json)) {
-    return false
-  }
-  const messages = json?.body?.messages || []
-  if (messages.length !== 1) {
-    return false
-  }
-  const [message] = messages
-  if (message['@type'] !== '/cosmos.bank.v1beta1.MsgSend') {
-    return false
-  }
-  if (message.from_address !== multisigAddress) {
-    return false
-  }
-  return true
-}
-
 const ProposalCreate: NextPage = () => {
   const router = useRouter()
   const multisigAddress = (router.query.multisigAddress || '') as string
@@ -106,8 +85,6 @@ const ProposalCreate: NextPage = () => {
       const amount = (parseFloat(currentTarget.amount.value.trim()) * 1000000).toString()
       jsonStr = templates[type]({ amount })
     }
-
-    console.log(jsonStr);
 
     if (
       title.length === 0 ||
@@ -174,6 +151,9 @@ const ProposalCreate: NextPage = () => {
     fetchCoins()
   }, [])
 
+  // TODO: Fix this type.
+  const selectStyles = { option: (provided: any) => ({ ...provided, color: 'black' }) };
+
   return (
     <WalletLoader>
       <div className="flex flex-col w-full">
@@ -200,6 +180,7 @@ const ProposalCreate: NextPage = () => {
               onChange={(e) => e && setType(e.value)}
               value={options.find((item) => item.value === type)}
               options={options}
+              styles={selectStyles}
             />
 
             {type === 'bank' && [
@@ -224,7 +205,7 @@ const ProposalCreate: NextPage = () => {
               <label key={4} className="block mt-4">
                 Denom
               </label>,
-              <Select name="denom" key={5} options={coins} />,
+              <Select styles={selectStyles} name="denom" key={5} options={coins} />,
             ]}
             {(type === 'anchorDeposit' || type === 'anchorWithdraw') && [
               <label key={0} className="block mt-4">
