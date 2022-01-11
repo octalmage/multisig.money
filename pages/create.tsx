@@ -68,7 +68,6 @@ const CreateMultisig: NextPage = () => {
   const [count, setCount] = useState(2)
   const [contractAddress, setContractAddress] = useState('')
   const [error, setError] = useState('')
-  const [transactionHash, setTransactionHash] = useState('')
   const [loading, setLoading] = useState(false)
 
   const connectedWallet = useConnectedWallet()
@@ -116,7 +115,9 @@ const CreateMultisig: NextPage = () => {
     const execute = new MsgInstantiateContract(
       connectedWallet?.walletAddress.toString() || '',
       connectedWallet?.walletAddress.toString() || '',
-      connectedWallet?.network.name === 'testnet' ? MULTISIG_CODE_ID_TESTNET : MULTISIG_CODE_ID,
+      connectedWallet?.network.name === 'testnet'
+        ? MULTISIG_CODE_ID_TESTNET
+        : MULTISIG_CODE_ID,
       msg,
       {}
     )
@@ -124,9 +125,29 @@ const CreateMultisig: NextPage = () => {
     post({
       msgs: [execute],
     })
-      .then(async (response) => {
-        setLoading(false);
-        setTransactionHash(response.result.txhash)
+      .then(response => response.result.txhash)
+      .then(async (txhash) => {
+        if (!lcd) return;
+
+        for (let i = 0; i <= 50; i += 1) {
+          // query txhash
+          try {
+            const data = await lcd.tx.txInfo(txhash)
+            if (data) return data
+          } catch (e) {
+            // NOOP
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 500))
+        }
+      })
+      .then((result) => {
+        if (result && result.logs) {
+          const address = result.logs[0].eventsByType.instantiate_contract.contract_address[0];
+          setContractAddress(address);
+        }
+
+        setLoading(false)
       })
       .catch((err) => {
         setLoading(false)
@@ -224,12 +245,18 @@ const CreateMultisig: NextPage = () => {
 
         {error && <LineAlert variant="error" msg={error} />}
 
-        {transactionHash && (
-          <div className="mt-8 text-right">
-            <LineAlert
-              variant="success"
-              msg={`Success! Transaction Hash: ${transactionHash}`}
-            />
+        {contractAddress !== '' && (
+          <div className="text-right">
+            <LineAlert variant="success" msg={`Success!`} />
+            <button
+              className="mt-4 box-border px-4 py-2 btn btn-primary"
+              onClick={(e) => {
+                e.preventDefault()
+                router.push(`/${encodeURIComponent(contractAddress)}`)
+              }}
+            >
+              View Multisig &#8599;
+            </button>
           </div>
         )}
       </div>
