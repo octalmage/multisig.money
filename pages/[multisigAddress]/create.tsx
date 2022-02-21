@@ -33,12 +33,59 @@ const templates = {
     const encodedMsg = btoa(JSON.stringify(msg))
     return `[{"wasm":{"execute":{"contract_addr":"terra1hzh9vpxhsk8253se0vv5jj6etdvxu3nv8z07zu","msg":"${encodedMsg}","funds":[]}}}]`
   },
+  cw20Transfer: ({
+    amount,
+    // decimals,
+    contractAddress,
+    recipient,
+  }: {
+    amount: string
+    decimals: string
+    contractAddress: string
+    recipient: string
+  }) => {
+    const msg = {
+      transfer: {
+        amount: amount,
+        recipient: recipient,
+      },
+    }
+    const encodedMsg = btoa(JSON.stringify(msg))
+
+    return `[{"wasm":{"execute":{"contract_addr":"${contractAddress}","execute_msg":"${encodedMsg}","funds":[]}}}]`
+  },
+  cw20Send: ({
+    amount,
+    // decimals,
+    contractAddress,
+    recipient,
+    encodedRecipientMsg,
+  }: {
+    amount: string
+    decimals: string
+    contractAddress: string
+    recipient: string
+    encodedRecipientMsg: string
+  }) => {
+    const msg = {
+      send: {
+        amount: amount,
+        contract: recipient,
+        msg: encodedRecipientMsg,
+      },
+    }
+    const encodedMsg = btoa(JSON.stringify(msg))
+
+    return `[{"wasm":{"execute":{"contract_addr":"${contractAddress}","execute_msg":"${encodedMsg}","funds":[]}}}]`
+  },
 }
 
 const options = [
   { value: 'bank', label: 'Bank send' },
   { value: 'anchorDeposit', label: 'Anchor deposit' },
   { value: 'anchorWithdraw', label: 'Anchor withdraw' },
+  { value: 'cw20Transfer', label: 'CW20 Transfer' },
+  { value: 'cw20Send', label: 'CW20 Send' },
   { value: 'custom', label: 'Custom' },
 ]
 
@@ -79,11 +126,45 @@ const ProposalCreate: NextPage = () => {
     } else if (type === 'bank') {
       const address = currentTarget.address.value.trim()
       const denom = currentTarget.denom.value.trim()
-      const amount = (parseFloat(currentTarget.amount.value.trim()) * 1000000).toString()
+      const amount = (
+        parseFloat(currentTarget.amount.value.trim()) * 1000000
+      ).toString()
       jsonStr = templates['bank']({ address, amount, denom })
     } else if (type === 'anchorDeposit' || type === 'anchorWithdraw') {
-      const amount = (parseFloat(currentTarget.amount.value.trim()) * 1000000).toString()
+      const amount = (
+        parseFloat(currentTarget.amount.value.trim()) * 1000000
+      ).toString()
       jsonStr = templates[type]({ amount })
+    } else if (type === 'cw20Transfer') {
+      const recipient = currentTarget.recipient.value.trim()
+      const contractAddress = currentTarget.contractAddress.value.trim()
+      const decimals = parseInt(currentTarget.decimals.value.trim())
+      const amount = (
+        parseFloat(currentTarget.amount.value.trim()) *
+        10 ** decimals
+      ).toString()
+      jsonStr = templates['cw20Transfer']({
+        contractAddress,
+        decimals: decimals.toFixed(0),
+        recipient,
+        amount,
+      })
+    } else if (type === 'cw20Send') {
+      const recipient = currentTarget.recipient.value.trim()
+      const contractAddress = currentTarget.contractAddress.value.trim()
+      const decimals = parseInt(currentTarget.decimals.value.trim())
+      const amount = (
+        parseFloat(currentTarget.amount.value.trim()) *
+        10 ** decimals
+      ).toString()
+      const encodedRecipientMsg = currentTarget.encodedRecipientMsg.value.trim()
+      jsonStr = templates['cw20Send']({
+        contractAddress,
+        decimals: decimals.toFixed(0),
+        recipient,
+        amount,
+        encodedRecipientMsg,
+      })
     }
 
     if (
@@ -93,7 +174,7 @@ const ProposalCreate: NextPage = () => {
     ) {
       setLoading(false)
       setError('All fields are required.')
-      return;
+      return
     }
 
     // clone json string to avoid prototype poisoning
@@ -152,7 +233,9 @@ const ProposalCreate: NextPage = () => {
   }, [])
 
   // TODO: Fix this type.
-  const selectStyles = { option: (provided: any) => ({ ...provided, color: 'black' }) };
+  const selectStyles = {
+    option: (provided: any) => ({ ...provided, color: 'black' }),
+  }
 
   return (
     <WalletLoader>
@@ -205,7 +288,12 @@ const ProposalCreate: NextPage = () => {
               <label key={4} className="block mt-4">
                 Denom
               </label>,
-              <Select styles={selectStyles} name="denom" key={5} options={coins} />,
+              <Select
+                styles={selectStyles}
+                name="denom"
+                key={5}
+                options={coins}
+              />,
             ]}
             {(type === 'anchorDeposit' || type === 'anchorWithdraw') && [
               <label key={0} className="block mt-4">
@@ -215,6 +303,91 @@ const ProposalCreate: NextPage = () => {
                 key={1}
                 className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
                 name="amount"
+                readOnly={complete}
+              />,
+            ]}
+            {type === 'cw20Transfer' && [
+              <label key={0} className="block mt-4">
+                CW20 Address
+              </label>,
+              <input
+                key={1}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="contractAddress"
+                readOnly={complete}
+              />,
+              <label key={2} className="block mt-4">
+                Decimals
+              </label>,
+              <input
+                key={3}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="decimals"
+                readOnly={complete}
+              />,
+              <label key={4} className="block mt-4">
+                Amount
+              </label>,
+              <input
+                key={5}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="amount"
+                readOnly={complete}
+              />,
+              <label key={6} className="block mt-4">
+                Recipient
+              </label>,
+              <input
+                key={7}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="recipient"
+                readOnly={complete}
+              />,
+            ]}
+            {type === 'cw20Send' && [
+              <label key={0} className="block mt-4">
+                CW20 Address
+              </label>,
+              <input
+                key={1}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="contractAddress"
+                readOnly={complete}
+              />,
+              <label key={2} className="block mt-4">
+                Decimals
+              </label>,
+              <input
+                key={3}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="decimals"
+                readOnly={complete}
+              />,
+              <label key={4} className="block mt-4">
+                Amount
+              </label>,
+              <input
+                key={5}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="amount"
+                readOnly={complete}
+              />,
+              <label key={6} className="block mt-4">
+                Recipient Contract
+              </label>,
+              <input
+                key={7}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="recipient"
+                readOnly={complete}
+              />,
+              <label key={8} className="block mt-4">
+                Encoded Recipient Message (base64-encoded payload of contract execution message)
+              </label>,
+              <input
+                key={9}
+                className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
+                name="encodedRecipientMsg"
                 readOnly={complete}
               />,
             ]}
