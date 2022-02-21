@@ -9,9 +9,9 @@ import { LCDClient, MsgExecuteContract } from '@terra-money/terra.js'
 import { useConnectedWallet } from '@terra-money/wallet-provider'
 
 function VoteButtons({
-  onVoteYes = () => {},
-  onVoteNo = () => {},
-  onBack = (e: any) => {},
+  onVoteYes = () => { },
+  onVoteNo = () => { },
+  onBack = (e: any) => { },
   votes = [],
   walletAddress = '',
   status = '',
@@ -116,7 +116,14 @@ const Proposal: NextPage = () => {
         setLoading(false)
         setError(err.message)
       })
-  }, [walletAddress, signingClient, multisigAddress, proposalId, timestamp, connectedWallet])
+  }, [
+    walletAddress,
+    signingClient,
+    multisigAddress,
+    proposalId,
+    timestamp,
+    connectedWallet,
+  ])
 
   const handleVote = async (vote: string) => {
     const execute = new MsgExecuteContract(
@@ -206,6 +213,13 @@ const Proposal: NextPage = () => {
               <div className="p-2 border border-black rounded mb-8">
                 <code className="break-all">
                   {JSON.stringify(proposal.msgs)}
+                </code>
+              </div>
+
+              <h1 className="text-3xl font-bold mb-8">Votes</h1>
+              <div className="p-2 border border-black rounded mb-8">
+                <code className="break-all">
+                  {JSON.stringify(votes, null, 4)}
                 </code>
               </div>
 
