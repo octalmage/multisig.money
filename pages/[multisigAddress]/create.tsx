@@ -35,24 +35,22 @@ const templates = {
   },
   cw20Transfer: ({
     amount,
-    // decimals,
     contractAddress,
     recipient,
   }: {
     amount: string
-    decimals: string
     contractAddress: string
     recipient: string
   }) => {
     const msg = {
       transfer: {
-        amount: amount,
+        amount: `${amount}`,
         recipient: recipient,
       },
     }
     const encodedMsg = btoa(JSON.stringify(msg))
 
-    return `[{"wasm":{"execute":{"contract_addr":"${contractAddress}","execute_msg":"${encodedMsg}","funds":[]}}}]`
+    return `[{"wasm":{"execute":{"contract_addr":"${contractAddress}","msg":"${encodedMsg}","funds":[]}}}]`
   },
   cw20Send: ({
     amount,
@@ -85,7 +83,6 @@ const options = [
   { value: 'anchorDeposit', label: 'Anchor deposit' },
   { value: 'anchorWithdraw', label: 'Anchor withdraw' },
   { value: 'cw20Transfer', label: 'CW20 Transfer' },
-  { value: 'cw20Send', label: 'CW20 Send' },
   { value: 'custom', label: 'Custom' },
 ]
 
@@ -145,7 +142,6 @@ const ProposalCreate: NextPage = () => {
       ).toString()
       jsonStr = templates['cw20Transfer']({
         contractAddress,
-        decimals: decimals.toFixed(0),
         recipient,
         amount,
       })
