@@ -39,7 +39,7 @@ function WalletLoader({
         <div className="flex flex-wrap items-center justify-around md:max-w-4xl mt-6 sm:w-full">
           <button
             className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus"
-            onClick={() => connect(ConnectType.CHROME_EXTENSION)}
+            onClick={() => connect(ConnectType.EXTENSION)}
           >
             <h3 className="text-2xl font-bold">Chrome extension &rarr;</h3>
             <p className="mt-4 text-xl">

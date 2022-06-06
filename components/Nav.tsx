@@ -20,7 +20,7 @@ function Nav() {
   // const { walletAddress, connectWallet } = useSigningClient()
   const handleConnect = () => {
     if (wallets.length === 0) {
-      connect(ConnectType.CHROME_EXTENSION);
+      connect(ConnectType.EXTENSION);
     } else {
       disconnect()
     }
