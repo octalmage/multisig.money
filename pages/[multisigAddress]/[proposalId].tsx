@@ -89,7 +89,6 @@ const Proposal: NextPage = () => {
     return new LCDClient({
       URL: connectedWallet.network.lcd,
       chainID: connectedWallet.network.chainID,
-      isClassic: true,
     })
   }, [connectedWallet])
 
