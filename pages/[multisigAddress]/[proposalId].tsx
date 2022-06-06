@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import { VoteInfo, ProposalResponse } from 'types/cw3'
-import { LCDClient, MsgExecuteContract } from '@terra-money/terra.js'
+import { LCDClient, MsgExecuteContract, Msg } from '@terra-money/terra.js'
 import { useConnectedWallet } from '@terra-money/wallet-provider'
 
 function VoteButtons({
@@ -89,6 +89,7 @@ const Proposal: NextPage = () => {
     return new LCDClient({
       URL: connectedWallet.network.lcd,
       chainID: connectedWallet.network.chainID,
+      isClassic: true,
     })
   }, [connectedWallet])
 
@@ -117,8 +118,8 @@ const Proposal: NextPage = () => {
         setError(err.message)
       })
   }, [
+    lcd,
     walletAddress,
-    signingClient,
     multisigAddress,
     proposalId,
     timestamp,
